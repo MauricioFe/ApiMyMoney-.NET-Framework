@@ -85,9 +85,9 @@ namespace ApiMyMoney.Controllers
 
 
         [HttpPost]
-        public void InserirCategoria(int id, string descricao)
+        public void Post(string descricao)
         {
-            cmd = new SqlCommand("Insert Into Categoria Values(" + id + ", " + descricao + ")");
+            cmd = new SqlCommand("Insert Into Categoria Values(" + descricao + ")", conn);
             try
             {
                 conn.Open();

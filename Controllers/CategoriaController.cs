@@ -85,9 +85,9 @@ namespace ApiMyMoney.Controllers
 
 
         [HttpPost]
-        public void Post(string descricao)
+        public void PostCategoria(string descricao)
         {
-            cmd = new SqlCommand("Insert Into Categoria Values(" + descricao + ")", conn);
+            cmd = new SqlCommand("Insert Into Categoria Values('" + descricao + "')", conn);
             try
             {
                 conn.Open();
@@ -103,5 +103,46 @@ namespace ApiMyMoney.Controllers
                 conn.Close();
             }
         }
+
+        [HttpPut]
+        public void PutCategoria(string descricao, int id)
+        {
+            cmd = new SqlCommand("Update Categoria set descricao = '" + descricao + "' where id = "+id, conn);
+            try
+            {
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+
+        [HttpDelete]
+        public void DeleteCategoria(int id)
+        {
+            cmd = new SqlCommand("Delete From Categoria where id = " + id, conn);
+            try
+            {
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+
     }
 }

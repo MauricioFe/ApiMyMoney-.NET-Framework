@@ -3,23 +3,27 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
 
 namespace ApiMyMoney.Controllers
 {
-    public class CategoriaController : ApiController
+    public class TipoMovimentacaoController : ApiController
     {
-        List<Categoria> categorias = new List<Categoria>();
+
+        List<TipoMovimentacao> tipoMovimentacaoList = new List<TipoMovimentacao>();
         SqlConnection conn = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=AppMyMoney;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
         SqlCommand cmd;
         SqlDataAdapter adapter;
         DataTable dt;
-        Categoria categoria;
+        TipoMovimentacao tipoMovimentacao;
 
         [HttpGet]
-        public List<Categoria> GetCategorias()
+        public List<TipoMovimentacao> GetTipoMovimentacaos()
         {
-            cmd = new SqlCommand("Select id, descricao from categoria", conn);
+            cmd = new SqlCommand("Select id, descricao from tipoMovimentacao", conn);
             adapter = new SqlDataAdapter(cmd);
             dt = new DataTable();
 
@@ -29,12 +33,12 @@ namespace ApiMyMoney.Controllers
                 adapter.Fill(dt);
                 foreach (DataRow item in dt.Rows)
                 {
-                    categoria = new Categoria();
-                    categoria.Id = Convert.ToInt32(item["id"]);
-                    categoria.Descricao = item["descricao"].ToString();
-                    categorias.Add(categoria);
+                    tipoMovimentacao = new TipoMovimentacao();
+                    tipoMovimentacao.Id = Convert.ToInt32(item["id"]);
+                    tipoMovimentacao.Descricao = item["descricao"].ToString();
+                    tipoMovimentacaoList.Add(tipoMovimentacao);
                 }
-                return categorias;
+                return tipoMovimentacaoList;
             }
             catch (Exception e)
             {
@@ -50,22 +54,22 @@ namespace ApiMyMoney.Controllers
         }
 
         [HttpGet]
-        public Categoria GetCategoriaById(int id)
+        public TipoMovimentacao GetTipoMovimentacaoById(int id)
         {
-            cmd = new SqlCommand("Select id, descricao from categoria where id = " + id + "", conn);
+            cmd = new SqlCommand("Select id, descricao from tipoMovimentacao where id = " + id + "", conn);
             adapter = new SqlDataAdapter(cmd);
             dt = new DataTable();
             try
             {
                 conn.Open();
                 adapter.Fill(dt);
-                categoria = new Categoria();
+                tipoMovimentacao = new TipoMovimentacao();
                 foreach (DataRow item in dt.Rows)
                 {
-                    categoria.Id = Convert.ToInt32(item["id"]);
-                    categoria.Descricao = item["descricao"].ToString();
+                    tipoMovimentacao.Id = Convert.ToInt32(item["id"]);
+                    tipoMovimentacao.Descricao = item["descricao"].ToString();
                 }
-                return categoria;
+                return tipoMovimentacao;
             }
             catch (Exception)
             {
@@ -80,9 +84,9 @@ namespace ApiMyMoney.Controllers
 
 
         [HttpPost]
-        public void PostCategoria(Categoria categoria)
+        public void PostTipoMovimentacao(TipoMovimentacao tipoMovimentacao)
         {
-            cmd = new SqlCommand("Insert Into Categoria Values('" + categoria.Descricao+ "')", conn);
+            cmd = new SqlCommand("Insert Into TipoMovimentacao Values('" + tipoMovimentacao.Descricao + "')", conn);
             try
             {
                 conn.Open();
@@ -100,9 +104,9 @@ namespace ApiMyMoney.Controllers
         }
 
         [HttpPut]
-        public void PutCategoria(Categoria categoria, int id)
+        public void PutTipoMovimentacao(TipoMovimentacao tipoMovimentacao, int id)
         {
-            cmd = new SqlCommand("Update Categoria set descricao = '" + categoria.Descricao + "' where id = "+id, conn);
+            cmd = new SqlCommand("Update TipoMovimentacao set descricao = '" + tipoMovimentacao.Descricao + "' where id = " + id, conn);
             try
             {
                 conn.Open();
@@ -120,9 +124,9 @@ namespace ApiMyMoney.Controllers
         }
 
         [HttpDelete]
-        public void DeleteCategoria(int id)
+        public void DeleteTipoMovimentacao(int id)
         {
-            cmd = new SqlCommand("Delete From Categoria where id = " + id, conn);
+            cmd = new SqlCommand("Delete From TipoMovimentacao where id = " + id, conn);
             try
             {
                 conn.Open();

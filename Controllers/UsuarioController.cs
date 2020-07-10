@@ -1,88 +1,88 @@
 ﻿using ApiMyMoney.Models;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
+using System.Data;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
 
 namespace ApiMyMoney.Controllers
 {
-    public class CategoriaController : ApiController
+    public class UsuarioController : ApiController
     {
-        List<Categoria> categorias = new List<Categoria>();
+        List<Usuario> usuarioList = new List<Usuario>();
         SqlConnection conn = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=AppMyMoney;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
         SqlCommand cmd;
         SqlDataAdapter adapter;
         DataTable dt;
-        Categoria categoria;
+        Usuario usuario;
 
         [HttpGet]
-        public List<Categoria> GetCategorias()
+        public List<Usuario> GetUsuarios()
         {
-            cmd = new SqlCommand("Select id, descricao from categoria", conn);
-            adapter = new SqlDataAdapter(cmd);
-            dt = new DataTable();
-
-            try
-            {
-                conn.Open();
-                adapter.Fill(dt);
-                foreach (DataRow item in dt.Rows)
-                {
-                    categoria = new Categoria();
-                    categoria.Id = Convert.ToInt32(item["id"]);
-                    categoria.Descricao = item["descricao"].ToString();
-                    categorias.Add(categoria);
-                }
-                return categorias;
-            }
-            catch (Exception e)
-            {
-
-                _ = e.StackTrace;
-                return null;
-            }
-            finally
-            {
-                conn.Close();
-            }
-
-        }
-
-        [HttpGet]
-        public Categoria GetCategoriaById(int id)
-        {
-            cmd = new SqlCommand("Select id, descricao from categoria where id = " + id + "", conn);
+            cmd = new SqlCommand("Select nome, email from Usuario", conn);
             adapter = new SqlDataAdapter(cmd);
             dt = new DataTable();
             try
             {
                 conn.Open();
                 adapter.Fill(dt);
-                categoria = new Categoria();
                 foreach (DataRow item in dt.Rows)
                 {
-                    categoria.Id = Convert.ToInt32(item["id"]);
-                    categoria.Descricao = item["descricao"].ToString();
+                    usuario = new Usuario();
+                    usuario.Nome = item["nome"].ToString();
+                    usuario.Email = item["email"].ToString();
+                    usuarioList.Add(usuario);
                 }
-                return categoria;
             }
             catch (Exception)
             {
-                return null;
+                throw;
             }
             finally
             {
                 conn.Close();
             }
+            return usuarioList;
+        }
 
+        [HttpGet]
+        public Usuario GetUsuarioById(int id)
+        {
+            cmd = new SqlCommand("Select nome, email from Usuario where id =" + id, conn);
+            adapter = new SqlDataAdapter(cmd);
+            dt = new DataTable();
+            try
+            {
+                conn.Open();
+                adapter.Fill(dt);
+                foreach (DataRow item in dt.Rows)
+                {
+                    usuario = new Usuario();
+                    usuario.Nome = item["nome"].ToString();
+                    usuario.Email = item["email"].ToString();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                conn.Close();
+            }
+            return usuario;
         }
 
 
+
         [HttpPost]
-        public void PostCategoria(Categoria categoria)
+        public void PostUsuario([FromBody] Usuario usuario)
         {
-            cmd = new SqlCommand("Insert Into Categoria Values('" + categoria.Descricao+ "')", conn);
+            cmd = new SqlCommand("Insert into Usuario Values('" + usuario.Nome + "', '" + usuario.Email + "', '" + usuario.Senha + "')", conn);
+
             try
             {
                 conn.Open();
@@ -90,7 +90,6 @@ namespace ApiMyMoney.Controllers
             }
             catch (Exception)
             {
-
                 throw;
             }
             finally
@@ -100,9 +99,9 @@ namespace ApiMyMoney.Controllers
         }
 
         [HttpPut]
-        public void PutCategoria(Categoria categoria, int id)
+        public void PutUsuario([FromBody]  Usuario usuario, int id)
         {
-            cmd = new SqlCommand("Update Categoria set descricao = '" + categoria.Descricao + "' where id = "+id, conn);
+            cmd = new SqlCommand("Update Usuario set nome = '" + usuario.Nome + "', email = '" + usuario.Email + "', senha = '" + usuario.Senha + "' where id = "+ id, conn);
             try
             {
                 conn.Open();
@@ -110,7 +109,6 @@ namespace ApiMyMoney.Controllers
             }
             catch (Exception)
             {
-
                 throw;
             }
             finally
@@ -120,9 +118,10 @@ namespace ApiMyMoney.Controllers
         }
 
         [HttpDelete]
-        public void DeleteCategoria(int id)
+        public void DeleteUsuario(int id)
         {
-            cmd = new SqlCommand("Delete From Categoria where id = " + id, conn);
+            cmd = new SqlCommand("Delete From Usuario  where id = " + id, conn);
+
             try
             {
                 conn.Open();
@@ -130,7 +129,6 @@ namespace ApiMyMoney.Controllers
             }
             catch (Exception)
             {
-
                 throw;
             }
             finally

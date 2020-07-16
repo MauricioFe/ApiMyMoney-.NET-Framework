@@ -55,7 +55,6 @@ namespace ApiMyMoney.Controllers
             }
             catch (Exception)
             {
-
                 throw;
             }
             finally
